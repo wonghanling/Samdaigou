@@ -98,15 +98,36 @@ const newArrivals = [
     imageUrl: '/29.webp',
     isNew: true,
   },
+  {
+    id: '14',
+    name: '山姆商品14',
+    price: 55.00,
+    imageUrl: '/178.webp',
+    isNew: true,
+  },
+  {
+    id: '15',
+    name: '山姆商品15',
+    price: 65.00,
+    imageUrl: '/179.webp',
+    isNew: true,
+  },
+  {
+    id: '16',
+    name: '山姆商品16',
+    price: 45.00,
+    imageUrl: '/180.webp',
+    isNew: true,
+  },
 ];
 
 const categories = [
-  { name: '🔥 爆款饼干 / 脆零食', color: 'bg-gradient-to-br from-red-400 to-red-500', shape: 'zigzag' },
-  { name: '🧈 黄油甜点 / 西式点心', color: 'bg-gradient-to-br from-pink-400 to-pink-500', shape: 'wave' },
-  { name: '🥜 坚果 · 健康零食', color: 'bg-gradient-to-br from-green-400 to-green-500', shape: 'diagonal' },
-  { name: '🍫 巧克力.糖果', color: 'bg-gradient-to-br from-blue-400 to-blue-500', shape: 'wave-bottom' },
-  { name: '🥛 饮品', color: 'bg-gradient-to-br from-yellow-400 to-yellow-500', shape: 'zigzag-top' },
-  { name: '🍜 即刻速食', color: 'bg-gradient-to-br from-orange-400 to-orange-500', shape: 'wave' },
+  { id: 'cookies', name: '爆款饼干 / 脆零食', color: 'bg-gradient-to-br from-red-400 to-red-500', shape: 'zigzag' },
+  { id: 'dessert', name: '黄油甜点 / 西式点心', color: 'bg-gradient-to-br from-pink-400 to-pink-500', shape: 'wave' },
+  { id: 'chocolate', name: '巧克力.糖果', color: 'bg-gradient-to-br from-blue-400 to-blue-500', shape: 'wave-bottom' },
+  { id: 'nuts', name: '坚果 · 健康零食', color: 'bg-gradient-to-br from-green-400 to-green-500', shape: 'diagonal' },
+  { id: 'drinks', name: '饮品', color: 'bg-gradient-to-br from-yellow-400 to-yellow-500', shape: 'zigzag-top' },
+  { id: 'instant', name: '即刻速食', color: 'bg-gradient-to-br from-orange-400 to-orange-500', shape: 'wave' },
 ];
 
 // 客户评价数据
@@ -195,10 +216,24 @@ export default function Home() {
       <main>
         {/* Hero Section */}
         <section className="relative bg-gradient-to-br from-pink-500 via-pink-400 to-purple-500 text-white min-h-[600px] md:min-h-[700px] flex items-end md:items-center overflow-hidden">
-          {/* 背景图片 */}
-          <div className="absolute inset-0 z-0">
+          {/* 背景图片 - 手机端 */}
+          <div className="absolute inset-0 z-0 md:hidden">
             <Image
-              src="/3.webp"
+              src="/5.webp"
+              alt="Sam's Club"
+              fill
+              quality={95}
+              priority
+              className="object-cover"
+            />
+            {/* 轻微的底部遮罩 */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+          </div>
+
+          {/* 背景图片 - 桌面端 */}
+          <div className="absolute inset-0 z-0 hidden md:block">
+            <Image
+              src="/1.webp"
               alt="Sam's Club"
               fill
               quality={95}
@@ -236,6 +271,11 @@ export default function Home() {
             <div className="text-center mb-12">
               <p className="text-pink-500 text-3xl italic font-light mb-2">New Arrivals</p>
               <h2 className="text-5xl md:text-6xl font-black text-gray-900 uppercase">JUST IN</h2>
+              <div className="mt-4">
+                <span className="inline-block bg-yellow-400 text-green-600 font-bold px-10 py-4 rounded-full text-lg shadow-lg">
+                  模式① 代购
+                </span>
+              </div>
             </div>
 
             <div className="relative">
@@ -255,7 +295,7 @@ export default function Home() {
                               <Link
                                 key={product.id}
                                 href={`/product/${product.id}`}
-                                className="bg-white border-4 border-black rounded-none p-4 md:p-8 hover:shadow-2xl transition-all group relative"
+                                className="bg-white border-t border-r border-l-4 border-b-4 border-black rounded-none p-4 md:p-8 hover:shadow-2xl transition-all group relative"
                               >
                                 {/* NEW 标签 */}
                                 {product.isNew && (
@@ -340,8 +380,8 @@ export default function Home() {
                   href="/category"
                   className="inline-block bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-12 rounded-full transition-all shadow-lg text-lg"
                 >
-                  <div>全球热销食品</div>
-                  <div className="text-sm">开发中....</div>
+                  <div>健身房</div>
+                  <div className="text-sm">Gym</div>
                 </Link>
               </div>
             </div>
@@ -359,7 +399,7 @@ export default function Home() {
             <div className="grid grid-cols-2 gap-4">
               {/* 手机端：单列。电脑端：左上大块，占2行 - 锯齿形 */}
               <Link
-                href={`/category/${categories[0].name}`}
+                href={`/category/${categories[0].id}`}
                 className={`relative ${categories[0].color} overflow-hidden group hover:scale-[1.02] transition-all h-[300px] md:h-[600px] md:row-span-2`}
                 style={{
                   clipPath: 'polygon(0 0, 4% 2%, 8% 0, 12% 2%, 16% 0, 20% 2%, 24% 0, 28% 2%, 32% 0, 36% 2%, 40% 0, 44% 2%, 48% 0, 52% 2%, 56% 0, 60% 2%, 64% 0, 68% 2%, 72% 0, 76% 2%, 80% 0, 84% 2%, 88% 0, 92% 2%, 96% 0, 100% 2%, 100% 100%, 96% 98%, 92% 100%, 88% 98%, 84% 100%, 80% 98%, 76% 100%, 72% 98%, 68% 100%, 64% 98%, 60% 100%, 56% 98%, 52% 100%, 48% 98%, 44% 100%, 40% 98%, 36% 100%, 32% 98%, 28% 100%, 24% 98%, 20% 100%, 16% 98%, 12% 100%, 8% 98%, 4% 100%, 0 98%)'
@@ -380,7 +420,7 @@ export default function Home() {
 
               {/* 右上 - 波浪形 */}
               <Link
-                href={`/category/${categories[1].name}`}
+                href={`/category/${categories[1].id}`}
                 className={`relative ${categories[1].color} overflow-hidden group hover:scale-[1.02] transition-all h-[300px] md:h-[290px]`}
                 style={{
                   clipPath: 'polygon(0 8%, 5% 6%, 10% 8%, 15% 6%, 20% 8%, 25% 6%, 30% 8%, 35% 6%, 40% 8%, 45% 6%, 50% 8%, 55% 6%, 60% 8%, 65% 6%, 70% 8%, 75% 6%, 80% 8%, 85% 6%, 90% 8%, 95% 6%, 100% 8%, 100% 92%, 95% 94%, 90% 92%, 85% 94%, 80% 92%, 75% 94%, 70% 92%, 65% 94%, 60% 92%, 55% 94%, 50% 92%, 45% 94%, 40% 92%, 35% 94%, 30% 92%, 25% 94%, 20% 92%, 15% 94%, 10% 92%, 5% 94%, 0 92%)'
@@ -401,7 +441,7 @@ export default function Home() {
 
               {/* 右中 - 波浪形 */}
               <Link
-                href={`/category/${categories[3].name}`}
+                href={`/category/${categories[3].id}`}
                 className={`relative ${categories[3].color} overflow-hidden group hover:scale-[1.02] transition-all h-[300px] md:h-[300px]`}
                 style={{
                   clipPath: 'polygon(0 8%, 5% 6%, 10% 8%, 15% 6%, 20% 8%, 25% 6%, 30% 8%, 35% 6%, 40% 8%, 45% 6%, 50% 8%, 55% 6%, 60% 8%, 65% 6%, 70% 8%, 75% 6%, 80% 8%, 85% 6%, 90% 8%, 95% 6%, 100% 8%, 100% 92%, 95% 94%, 90% 92%, 85% 94%, 80% 92%, 75% 94%, 70% 92%, 65% 94%, 60% 92%, 55% 94%, 50% 92%, 45% 94%, 40% 92%, 35% 94%, 30% 92%, 25% 94%, 20% 92%, 15% 94%, 10% 92%, 5% 94%, 0 92%)'
@@ -422,7 +462,7 @@ export default function Home() {
 
               {/* 第三行左 - 波浪形 */}
               <Link
-                href={`/category/${categories[2].name}`}
+                href={`/category/${categories[2].id}`}
                 className={`relative ${categories[2].color} overflow-hidden group hover:scale-[1.02] transition-all h-[300px]`}
                 style={{
                   clipPath: 'polygon(0 8%, 5% 6%, 10% 8%, 15% 6%, 20% 8%, 25% 6%, 30% 8%, 35% 6%, 40% 8%, 45% 6%, 50% 8%, 55% 6%, 60% 8%, 65% 6%, 70% 8%, 75% 6%, 80% 8%, 85% 6%, 90% 8%, 95% 6%, 100% 8%, 100% 92%, 95% 94%, 90% 92%, 85% 94%, 80% 92%, 75% 94%, 70% 92%, 65% 94%, 60% 92%, 55% 94%, 50% 92%, 45% 94%, 40% 92%, 35% 94%, 30% 92%, 25% 94%, 20% 92%, 15% 94%, 10% 92%, 5% 94%, 0 92%)'
@@ -443,7 +483,7 @@ export default function Home() {
 
               {/* 第三行右 - 波浪形 */}
               <Link
-                href={`/category/${categories[4].name}`}
+                href={`/category/${categories[4].id}`}
                 className={`relative ${categories[4].color} overflow-hidden group hover:scale-[1.02] transition-all h-[300px]`}
                 style={{
                   clipPath: 'polygon(0 8%, 5% 6%, 10% 8%, 15% 6%, 20% 8%, 25% 6%, 30% 8%, 35% 6%, 40% 8%, 45% 6%, 50% 8%, 55% 6%, 60% 8%, 65% 6%, 70% 8%, 75% 6%, 80% 8%, 85% 6%, 90% 8%, 95% 6%, 100% 8%, 100% 92%, 95% 94%, 90% 92%, 85% 94%, 80% 92%, 75% 94%, 70% 92%, 65% 94%, 60% 92%, 55% 94%, 50% 92%, 45% 94%, 40% 92%, 35% 94%, 30% 92%, 25% 94%, 20% 92%, 15% 94%, 10% 92%, 5% 94%, 0 92%)'
@@ -464,7 +504,7 @@ export default function Home() {
 
               {/* 底部全宽 - 锯齿形 */}
               <Link
-                href={`/category/${categories[5].name}`}
+                href={`/category/${categories[5].id}`}
                 className={`relative ${categories[5].color} overflow-hidden group hover:scale-[1.02] transition-all h-[300px] md:col-span-2`}
                 style={{
                   clipPath: 'polygon(0 0, 4% 2%, 8% 0, 12% 2%, 16% 0, 20% 2%, 24% 0, 28% 2%, 32% 0, 36% 2%, 40% 0, 44% 2%, 48% 0, 52% 2%, 56% 0, 60% 2%, 64% 0, 68% 2%, 72% 0, 76% 2%, 80% 0, 84% 2%, 88% 0, 92% 2%, 96% 0, 100% 2%, 100% 100%, 96% 98%, 92% 100%, 88% 98%, 84% 100%, 80% 98%, 76% 100%, 72% 98%, 68% 100%, 64% 98%, 60% 100%, 56% 98%, 52% 100%, 48% 98%, 44% 100%, 40% 98%, 36% 100%, 32% 98%, 28% 100%, 24% 98%, 20% 100%, 16% 98%, 12% 100%, 8% 98%, 4% 100%, 0 98%)'
@@ -489,6 +529,13 @@ export default function Home() {
         {/* 会员代下单服务 */}
         <section className="py-20 bg-white">
           <div className="container-custom">
+            {/* 模式2标注 */}
+            <div className="text-center mb-8">
+              <span className="inline-block bg-yellow-400 text-green-600 font-bold px-10 py-4 rounded-full text-lg shadow-lg">
+                模式② 代下单
+              </span>
+            </div>
+
             <div className="relative" style={{ filter: 'drop-shadow(0 0 0 4px black)' }}>
               <div
                 className="bg-gradient-to-br from-blue-500 via-blue-400 to-cyan-500 text-white px-12 py-16 md:px-20 md:py-20"
