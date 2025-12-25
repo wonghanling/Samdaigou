@@ -4,34 +4,35 @@ import Navbar from '@/components/Navbar';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
+import { useCart } from '@/contexts/CartContext';
 
 // 示例商品数据（后续会从Firebase获取）
 const newArrivals = [
   {
     id: '1',
-    name: '山姆商品1',
-    price: 35.00,
+    name: '山姆商品1 山姆海盐苏打饼干1.5kg',
+    price: 73.00,
     imageUrl: '/16.webp',
     isNew: true,
   },
   {
     id: '2',
-    name: '山姆商品2',
-    price: 58.00,
+    name: '山姆商品2 山姆牛肉馅酥脆饼干1kg',
+    price: 95.00,
     imageUrl: '/17.webp',
     isNew: true,
   },
   {
     id: '3',
-    name: '山姆商品3',
-    price: 128.00,
+    name: '山姆商品3 黑松露火腿苏打饼干1.16kg',
+    price: 71.00,
     imageUrl: '/18.webp',
     isNew: true,
   },
   {
     id: '4',
-    name: '山姆商品4',
-    price: 158.00,
+    name: '山姆商品4 卡乐比Jagabee淡盐味薯条600g',
+    price: 99.00,
     imageUrl: '/19.webp',
     isNew: true,
   },
@@ -173,6 +174,19 @@ const reviews = [
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [currentReviewSlide, setCurrentReviewSlide] = useState(0);
+  const { addToCart } = useCart();
+
+  // 添加到购物车函数
+  const handleAddToCart = (e: React.MouseEvent, product: typeof newArrivals[0]) => {
+    e.preventDefault(); // 阻止Link的默认导航
+    e.stopPropagation();
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      imageUrl: product.imageUrl,
+    });
+  };
 
   // 每页显示的产品数量
   const itemsPerPage = typeof window !== 'undefined' && window.innerWidth >= 1024 ? 4 : 4;
@@ -272,7 +286,7 @@ export default function Home() {
               <p className="text-pink-500 text-3xl italic font-light mb-2">New Arrivals</p>
               <h2 className="text-5xl md:text-6xl font-black text-gray-900 uppercase">JUST IN</h2>
               <div className="mt-4">
-                <span className="inline-block bg-yellow-400 text-green-600 font-bold px-10 py-4 rounded-full text-lg shadow-lg">
+                <span className="inline-block bg-yellow-400 text-black font-bold px-10 py-4 rounded-full text-lg shadow-lg">
                   模式① 代购
                 </span>
               </div>
@@ -317,7 +331,15 @@ export default function Home() {
 
                                 {/* 产品信息 */}
                                 <h3 className="font-bold text-xs md:text-base mb-3 md:mb-4 text-gray-900 min-h-[36px] md:min-h-[44px] leading-tight">
-                                  {product.name}
+                                  {product.name.split(' ').length > 1 ? (
+                                    <>
+                                      {product.name.split(' ')[0]}
+                                      <br />
+                                      {product.name.split(' ').slice(1).join(' ')}
+                                    </>
+                                  ) : (
+                                    product.name
+                                  )}
                                 </h3>
 
                                 <div className="flex items-center justify-between">
@@ -325,8 +347,11 @@ export default function Home() {
                                     € {product.price.toFixed(2)}
                                   </span>
 
-                                  {/* 加号按钮 */}
-                                  <button className="w-10 h-10 md:w-14 md:h-14 bg-pink-500 hover:bg-pink-600 rounded-full flex items-center justify-center text-white shadow-lg transition-all">
+                                  {/* 加入购物车按钮 */}
+                                  <button
+                                    onClick={(e) => handleAddToCart(e, product)}
+                                    className="w-10 h-10 md:w-14 md:h-14 bg-pink-500 hover:bg-pink-600 rounded-full flex items-center justify-center text-white shadow-lg transition-all"
+                                  >
                                     <svg className="w-5 h-5 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" />
                                     </svg>
@@ -531,7 +556,7 @@ export default function Home() {
           <div className="container-custom">
             {/* 模式2标注 */}
             <div className="text-center mb-8">
-              <span className="inline-block bg-yellow-400 text-green-600 font-bold px-10 py-4 rounded-full text-lg shadow-lg">
+              <span className="inline-block bg-yellow-400 text-black font-bold px-10 py-4 rounded-full text-lg shadow-lg">
                 模式② 代下单
               </span>
             </div>

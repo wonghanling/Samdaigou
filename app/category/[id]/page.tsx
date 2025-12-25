@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Navbar from '@/components/Navbar';
 import { useParams } from 'next/navigation';
+import { useCart } from '@/contexts/CartContext';
 
 // 分类数据
 const categories = [
@@ -119,66 +120,78 @@ const drinksProducts = [
   { id: '123', name: '山姆商品100', specs: '500ml', price: 3.99, imageUrl: '/123.webp' },
   { id: '124', name: '山姆商品101', specs: '500ml', price: 3.99, imageUrl: '/124.webp' },
   { id: '125', name: '山姆商品102', specs: '500ml', price: 3.99, imageUrl: '/125.webp' },
-  { id: '126', name: '山姆商品103', specs: '500ml', price: 3.99, imageUrl: '/126.webp' },
-  { id: '127', name: '山姆商品104', specs: '500ml', price: 3.99, imageUrl: '/127.webp' },
-  { id: '128', name: '山姆商品105', specs: '500ml', price: 3.99, imageUrl: '/128.webp' },
-  { id: '129', name: '山姆商品106', specs: '500ml', price: 3.99, imageUrl: '/129.webp' },
-  { id: '130', name: '山姆商品107', specs: '500ml', price: 3.99, imageUrl: '/130.webp' },
-  { id: '131', name: '山姆商品108', specs: '500ml', price: 3.99, imageUrl: '/131.webp' },
-  { id: '132', name: '山姆商品109', specs: '500ml', price: 3.99, imageUrl: '/132.webp' },
-  { id: '133', name: '山姆商品110', specs: '500ml', price: 3.99, imageUrl: '/133.webp' },
-  { id: '134', name: '山姆商品111', specs: '500ml', price: 3.99, imageUrl: '/134.webp' },
-  { id: '135', name: '山姆商品112', specs: '500ml', price: 3.99, imageUrl: '/135.webp' },
-  { id: '136', name: '山姆商品113', specs: '500ml', price: 3.99, imageUrl: '/136.webp' },
-  { id: '137', name: '山姆商品114', specs: '500ml', price: 3.99, imageUrl: '/137.webp' },
-  { id: '138', name: '山姆商品115', specs: '500ml', price: 3.99, imageUrl: '/138.webp' },
-  { id: '139', name: '山姆商品116', specs: '500ml', price: 3.99, imageUrl: '/139.webp' },
-  { id: '140', name: '山姆商品117', specs: '500ml', price: 3.99, imageUrl: '/140.webp' },
-  { id: '141', name: '山姆商品118', specs: '500ml', price: 3.99, imageUrl: '/141.webp' },
-  { id: '142', name: '山姆商品119', specs: '500ml', price: 3.99, imageUrl: '/142.webp' },
-  { id: '143', name: '山姆商品120', specs: '500ml', price: 3.99, imageUrl: '/143.webp' },
-  { id: '144', name: '山姆商品121', specs: '500ml', price: 3.99, imageUrl: '/144.webp' },
-  { id: '145', name: '山姆商品122', specs: '500ml', price: 3.99, imageUrl: '/145.webp' },
-  { id: '146', name: '山姆商品123', specs: '500ml', price: 3.99, imageUrl: '/146.webp' },
-  { id: '147', name: '山姆商品124', specs: '500ml', price: 3.99, imageUrl: '/147.webp' },
-  { id: '148', name: '山姆商品125', specs: '500ml', price: 3.99, imageUrl: '/148.webp' },
-  { id: '149', name: '山姆商品126', specs: '500ml', price: 3.99, imageUrl: '/149.webp' },
-  { id: '150', name: '山姆商品127', specs: '500ml', price: 3.99, imageUrl: '/150.webp' },
-  { id: '151', name: '山姆商品128', specs: '500ml', price: 3.99, imageUrl: '/151.webp' },
-  { id: '152', name: '山姆商品129', specs: '500ml', price: 3.99, imageUrl: '/152.webp' },
-  { id: '153', name: '山姆商品130', specs: '500ml', price: 3.99, imageUrl: '/153.webp' },
-  { id: '154', name: '山姆商品131', specs: '500ml', price: 3.99, imageUrl: '/154.webp' },
-  { id: '155', name: '山姆商品132', specs: '500ml', price: 3.99, imageUrl: '/155.webp' },
-  { id: '156', name: '山姆商品133', specs: '500ml', price: 3.99, imageUrl: '/156.webp' },
-  { id: '158', name: '山姆商品135', specs: '500ml', price: 3.99, imageUrl: '/158.webp' },
-  { id: '159', name: '山姆商品136', specs: '500ml', price: 3.99, imageUrl: '/159.webp' },
-  { id: '160', name: '山姆商品137', specs: '500ml', price: 3.99, imageUrl: '/160.webp' },
-  { id: '161', name: '山姆商品138', specs: '500ml', price: 3.99, imageUrl: '/161.webp' },
-  { id: '162', name: '山姆商品139', specs: '500ml', price: 3.99, imageUrl: '/162.webp' },
-  { id: '163', name: '山姆商品140', specs: '500ml', price: 3.99, imageUrl: '/163.webp' },
-  { id: '164', name: '山姆商品141', specs: '500ml', price: 3.99, imageUrl: '/164.webp' },
-  { id: '165', name: '山姆商品142', specs: '500ml', price: 3.99, imageUrl: '/165.webp' },
-  { id: '166', name: '山姆商品143', specs: '500ml', price: 3.99, imageUrl: '/166.webp' },
-  { id: '167', name: '山姆商品144', specs: '500ml', price: 3.99, imageUrl: '/167.webp' },
+  { id: '127', name: '山姆商品103', specs: '500ml', price: 3.99, imageUrl: '/127.webp' },
+  { id: '128', name: '山姆商品104', specs: '500ml', price: 3.99, imageUrl: '/128.webp' },
+  { id: '129', name: '山姆商品105', specs: '500ml', price: 3.99, imageUrl: '/129.webp' },
+  { id: '130', name: '山姆商品106', specs: '500ml', price: 3.99, imageUrl: '/130.webp' },
+  { id: '131', name: '山姆商品107', specs: '500ml', price: 3.99, imageUrl: '/131.webp' },
+  { id: '132', name: '山姆商品108', specs: '500ml', price: 3.99, imageUrl: '/132.webp' },
+  { id: '133', name: '山姆商品109', specs: '500ml', price: 3.99, imageUrl: '/133.webp' },
+  { id: '134', name: '山姆商品110', specs: '500ml', price: 3.99, imageUrl: '/134.webp' },
+  { id: '135', name: '山姆商品111', specs: '500ml', price: 3.99, imageUrl: '/135.webp' },
+  { id: '136', name: '山姆商品112', specs: '500ml', price: 3.99, imageUrl: '/136.webp' },
+  { id: '137', name: '山姆商品113', specs: '500ml', price: 3.99, imageUrl: '/137.webp' },
+  { id: '138', name: '山姆商品114', specs: '500ml', price: 3.99, imageUrl: '/138.webp' },
+  { id: '139', name: '山姆商品115', specs: '500ml', price: 3.99, imageUrl: '/139.webp' },
+  { id: '140', name: '山姆商品116', specs: '500ml', price: 3.99, imageUrl: '/140.webp' },
+  { id: '141', name: '山姆商品117', specs: '500ml', price: 3.99, imageUrl: '/141.webp' },
+  { id: '142', name: '山姆商品118', specs: '500ml', price: 3.99, imageUrl: '/142.webp' },
+  { id: '143', name: '山姆商品119', specs: '500ml', price: 3.99, imageUrl: '/143.webp' },
+  { id: '144', name: '山姆商品120', specs: '500ml', price: 3.99, imageUrl: '/144.webp' },
+  { id: '145', name: '山姆商品121', specs: '500ml', price: 3.99, imageUrl: '/145.webp' },
+  { id: '146', name: '山姆商品122', specs: '500ml', price: 3.99, imageUrl: '/146.webp' },
+  { id: '147', name: '山姆商品123', specs: '500ml', price: 3.99, imageUrl: '/147.webp' },
+  { id: '148', name: '山姆商品124', specs: '500ml', price: 3.99, imageUrl: '/148.webp' },
+  { id: '149', name: '山姆商品125', specs: '500ml', price: 3.99, imageUrl: '/149.webp' },
+  { id: '150', name: '山姆商品126', specs: '500ml', price: 3.99, imageUrl: '/150.webp' },
+  { id: '151', name: '山姆商品127', specs: '500ml', price: 3.99, imageUrl: '/151.webp' },
+  { id: '152', name: '山姆商品128', specs: '500ml', price: 3.99, imageUrl: '/152.webp' },
+  { id: '153', name: '山姆商品129', specs: '500ml', price: 3.99, imageUrl: '/153.webp' },
+  { id: '154', name: '山姆商品130', specs: '500ml', price: 3.99, imageUrl: '/154.webp' },
+  { id: '155', name: '山姆商品131', specs: '500ml', price: 3.99, imageUrl: '/155.webp' },
+  { id: '156', name: '山姆商品132', specs: '500ml', price: 3.99, imageUrl: '/156.webp' },
+  { id: '158', name: '山姆商品133', specs: '500ml', price: 3.99, imageUrl: '/158.webp' },
+  { id: '159', name: '山姆商品134', specs: '500ml', price: 3.99, imageUrl: '/159.webp' },
+  { id: '160', name: '山姆商品135', specs: '500ml', price: 3.99, imageUrl: '/160.webp' },
+  { id: '161', name: '山姆商品136', specs: '500ml', price: 3.99, imageUrl: '/161.webp' },
+  { id: '162', name: '山姆商品137', specs: '500ml', price: 3.99, imageUrl: '/162.webp' },
+  { id: '163', name: '山姆商品138', specs: '500ml', price: 3.99, imageUrl: '/163.webp' },
+  { id: '164', name: '山姆商品139', specs: '500ml', price: 3.99, imageUrl: '/164.webp' },
+  { id: '165', name: '山姆商品140', specs: '500ml', price: 3.99, imageUrl: '/165.webp' },
+  { id: '166', name: '山姆商品141', specs: '500ml', price: 3.99, imageUrl: '/166.webp' },
+  { id: '167', name: '山姆商品142', specs: '500ml', price: 3.99, imageUrl: '/167.webp' },
 ];
 
 // 商品数据 - 即刻速食
 const instantProducts = [
-  { id: '168', name: '山姆商品145', specs: '300g', price: 5.99, imageUrl: '/168.webp' },
-  { id: '169', name: '山姆商品146', specs: '300g', price: 5.99, imageUrl: '/169.webp' },
-  { id: '170', name: '山姆商品147', specs: '300g', price: 5.99, imageUrl: '/170.webp' },
-  { id: '171', name: '山姆商品148', specs: '300g', price: 5.99, imageUrl: '/171.webp' },
-  { id: '172', name: '山姆商品149', specs: '300g', price: 5.99, imageUrl: '/172.webp' },
-  { id: '173', name: '山姆商品150', specs: '300g', price: 5.99, imageUrl: '/173.webp' },
-  { id: '174', name: '山姆商品151', specs: '300g', price: 5.99, imageUrl: '/174.webp' },
-  { id: '175', name: '山姆商品152', specs: '300g', price: 5.99, imageUrl: '/175.webp' },
-  { id: '176', name: '山姆商品153', specs: '300g', price: 5.99, imageUrl: '/176.webp' },
-  { id: '177', name: '山姆商品154', specs: '300g', price: 5.99, imageUrl: '/177.webp' },
+  { id: '168', name: '山姆商品143', specs: '300g', price: 5.99, imageUrl: '/168.webp' },
+  { id: '169', name: '山姆商品144', specs: '300g', price: 5.99, imageUrl: '/169.webp' },
+  { id: '170', name: '山姆商品145', specs: '300g', price: 5.99, imageUrl: '/170.webp' },
+  { id: '171', name: '山姆商品146', specs: '300g', price: 5.99, imageUrl: '/171.webp' },
+  { id: '172', name: '山姆商品147', specs: '300g', price: 5.99, imageUrl: '/172.webp' },
+  { id: '173', name: '山姆商品148', specs: '300g', price: 5.99, imageUrl: '/173.webp' },
+  { id: '174', name: '山姆商品149', specs: '300g', price: 5.99, imageUrl: '/174.webp' },
+  { id: '175', name: '山姆商品150', specs: '300g', price: 5.99, imageUrl: '/175.webp' },
+  { id: '176', name: '山姆商品151', specs: '300g', price: 5.99, imageUrl: '/176.webp' },
+  { id: '177', name: '山姆商品152', specs: '300g', price: 5.99, imageUrl: '/177.webp' },
 ];
 
 export default function CategoryPage() {
   const params = useParams();
   const categoryId = params.id as string;
+  const { addToCart } = useCart();
+
+  // 添加到购物车函数
+  const handleAddToCart = (e: React.MouseEvent, product: any) => {
+    e.preventDefault(); // 阻止Link的默认导航
+    e.stopPropagation();
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      imageUrl: product.imageUrl,
+    });
+  };
 
   // 根据选择的分类获取商品
   const getProductsByCategory = (categoryId: string) => {
@@ -292,8 +305,11 @@ export default function CategoryPage() {
                       € {product.price.toFixed(2)}
                     </span>
 
-                    {/* 加号按钮 */}
-                    <button className="w-12 h-12 bg-pink-500 hover:bg-pink-600 rounded-full flex items-center justify-center text-white shadow-lg transition-all">
+                    {/* 加入购物车按钮 */}
+                    <button
+                      onClick={(e) => handleAddToCart(e, product)}
+                      className="w-12 h-12 bg-pink-500 hover:bg-pink-600 rounded-full flex items-center justify-center text-white shadow-lg transition-all"
+                    >
                       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" />
                       </svg>
