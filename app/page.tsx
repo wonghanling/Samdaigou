@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useCart } from '@/contexts/CartContext';
+import { useRouter } from 'next/navigation';
 
 // 示例商品数据（后续会从Firebase获取）
 const newArrivals = [
@@ -39,84 +40,84 @@ const newArrivals = [
   {
     id: '5',
     name: '山姆商品5',
-    price: 42.00,
+    price: 74.80,
     imageUrl: '/20.webp',
     isNew: true,
   },
   {
     id: '6',
     name: '山姆商品6',
-    price: 68.00,
+    price: 48.90,
     imageUrl: '/21.webp',
     isNew: true,
   },
   {
     id: '7',
     name: '山姆商品7',
-    price: 188.00,
+    price: 55.90,
     imageUrl: '/22.webp',
     isNew: true,
   },
   {
     id: '8',
     name: '山姆商品8',
-    price: 98.00,
+    price: 37.90,
     imageUrl: '/23.webp',
     isNew: true,
   },
   {
     id: '9',
     name: '山姆商品9',
-    price: 76.00,
+    price: 60.90,
     imageUrl: '/24.webp',
     isNew: true,
   },
   {
     id: '10',
     name: '山姆商品10',
-    price: 88.00,
+    price: 106.90,
     imageUrl: '/25.webp',
     isNew: true,
   },
   {
     id: '11',
     name: '山姆商品11',
-    price: 108.00,
+    price: 99.80,
     imageUrl: '/26.webp',
     isNew: true,
   },
   {
     id: '12',
     name: '山姆商品12',
-    price: 65.00,
+    price: 65.90,
     imageUrl: '/28.webp',
     isNew: true,
   },
   {
     id: '13',
     name: '山姆商品13',
-    price: 92.00,
+    price: 59.90,
     imageUrl: '/29.webp',
     isNew: true,
   },
   {
     id: '14',
     name: '山姆商品14',
-    price: 55.00,
+    price: 75.90,
     imageUrl: '/178.webp',
     isNew: true,
   },
   {
     id: '15',
     name: '山姆商品15',
-    price: 65.00,
+    price: 92.90,
     imageUrl: '/179.webp',
     isNew: true,
   },
   {
     id: '16',
     name: '山姆商品16',
-    price: 45.00,
+    price: 95.90,
     imageUrl: '/180.webp',
     isNew: true,
   },
@@ -175,6 +176,7 @@ export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [currentReviewSlide, setCurrentReviewSlide] = useState(0);
   const { addToCart } = useCart();
+  const router = useRouter();
 
   // 添加到购物车函数
   const handleAddToCart = (e: React.MouseEvent, product: typeof newArrivals[0]) => {
@@ -186,6 +188,18 @@ export default function Home() {
       price: product.price,
       imageUrl: product.imageUrl,
     });
+  };
+
+  // 添加9.9代下单服务
+  const handleAddVipService = () => {
+    addToCart({
+      id: 'vip-service',
+      name: '9.9会员代下单服务',
+      price: 9.9,
+      imageUrl: '/icon_bright_256.webp',
+    });
+    // 跳转到购物车
+    router.push('/cart');
   };
 
   // 每页显示的产品数量
@@ -603,6 +617,16 @@ export default function Home() {
                       </div>
                       <span className="text-lg font-bold">专人协助</span>
                     </div>
+                  </div>
+
+                  {/* 9.9会员代下单按钮 */}
+                  <div className="mt-8">
+                    <button
+                      onClick={handleAddVipService}
+                      className="bg-green-500 hover:bg-green-600 text-white font-black text-2xl px-12 py-5 rounded-full shadow-xl transition-all hover:scale-105 border-4 border-yellow-400"
+                    >
+                      9.9会员代下单
+                    </button>
                   </div>
                 </div>
               </div>
