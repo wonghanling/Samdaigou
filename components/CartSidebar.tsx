@@ -163,7 +163,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                   onClick={onClose}
                   className="block w-full bg-green-500 hover:bg-green-600 text-white font-black text-lg py-4 text-center uppercase transition-colors border-4 border-black"
                 >
-                  GO TO CART 去购物车
+                  去购物车付款 GO TO CART
                 </Link>
               </div>
             </>
