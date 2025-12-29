@@ -57,15 +57,27 @@ export default function CheckoutPage() {
       });
 
       const result = await response.json();
+      console.log('支付API返回:', result); // 调试日志
 
       if (result.success) {
-        // 清空购物车
-        clearCart();
+        const paymentUrl = result.data?.paymentUrl;
+        console.log('支付URL:', paymentUrl); // 调试日志
 
-        // 跳转到支付宝支付页面
-        window.location.href = result.data.paymentUrl;
+        if (!paymentUrl) {
+          alert('支付URL生成失败，请检查Vercel环境变量配置');
+          setLoading(false);
+          return;
+        }
+
+        // 先跳转到支付页面
+        window.location.href = paymentUrl;
+
+        // 跳转成功后再清空购物车（延迟执行，确保跳转已开始）
+        setTimeout(() => {
+          clearCart();
+        }, 500);
       } else {
-        alert('创建订单失败：' + result.error);
+        alert('创建订单失败：' + (result.error || '未知错误'));
         setLoading(false);
       }
     } catch (error) {
