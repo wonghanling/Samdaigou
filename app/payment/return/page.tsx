@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Link from 'next/link';
 
-export default function PaymentReturnPage() {
+function PaymentReturnContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [status, setStatus] = useState<'checking' | 'success' | 'failed'>('checking');
@@ -119,5 +119,25 @@ export default function PaymentReturnPage() {
         </div>
       </div>
     </>
+  );
+}
+
+export default function PaymentReturnPage() {
+  return (
+    <Suspense fallback={
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-gray-50 py-12">
+          <div className="container-custom max-w-2xl">
+            <div className="bg-white border-4 border-black p-12 text-center">
+              <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-pink-500 mx-auto mb-6"></div>
+              <h2 className="text-2xl font-bold mb-2">加载中...</h2>
+            </div>
+          </div>
+        </div>
+      </>
+    }>
+      <PaymentReturnContent />
+    </Suspense>
   );
 }

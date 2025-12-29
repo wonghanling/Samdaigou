@@ -1,15 +1,26 @@
 import { AlipaySdk } from 'alipay-sdk';
 
-// 初始化支付宝SDK
-const alipaySdk = new AlipaySdk({
-  appId: process.env.ALIPAY_APP_ID || '',
-  privateKey: process.env.ALIPAY_PRIVATE_KEY || '',
-  alipayPublicKey: process.env.ALIPAY_PUBLIC_KEY || '',
-  gateway: 'https://openapi.alipay.com/gateway.do',
-  signType: 'RSA2',
-  charset: 'utf-8',
-  version: '1.0',
-});
+// 延迟初始化支付宝SDK，避免构建时报错
+let alipaySdk: AlipaySdk | null = null;
+
+function getAlipaySdk(): AlipaySdk {
+  if (!alipaySdk) {
+    if (!process.env.ALIPAY_APP_ID || !process.env.ALIPAY_PRIVATE_KEY || !process.env.ALIPAY_PUBLIC_KEY) {
+      throw new Error('支付宝配置未完成，请在Vercel配置环境变量：ALIPAY_APP_ID, ALIPAY_PRIVATE_KEY, ALIPAY_PUBLIC_KEY');
+    }
+
+    alipaySdk = new AlipaySdk({
+      appId: process.env.ALIPAY_APP_ID,
+      privateKey: process.env.ALIPAY_PRIVATE_KEY,
+      alipayPublicKey: process.env.ALIPAY_PUBLIC_KEY,
+      gateway: 'https://openapi.alipay.com/gateway.do',
+      signType: 'RSA2',
+      charset: 'utf-8',
+      version: '1.0',
+    });
+  }
+  return alipaySdk;
+}
 
 // 设备类型检测
 export function isMobile(userAgent: string): boolean {
@@ -25,7 +36,8 @@ export async function createPCPayment(params: {
   returnUrl: string;
   notifyUrl: string;
 }) {
-  const result = await alipaySdk.pageExec('alipay.trade.page.pay', {
+  const sdk = getAlipaySdk();
+  const result = await sdk.pageExec('alipay.trade.page.pay', {
     bizContent: {
       out_trade_no: params.outTradeNo,
       product_code: 'FAST_INSTANT_TRADE_PAY',
@@ -49,7 +61,8 @@ export async function createMobilePayment(params: {
   returnUrl: string;
   notifyUrl: string;
 }) {
-  const result = await alipaySdk.pageExec('alipay.trade.wap.pay', {
+  const sdk = getAlipaySdk();
+  const result = await sdk.pageExec('alipay.trade.wap.pay', {
     bizContent: {
       out_trade_no: params.outTradeNo,
       product_code: 'QUICK_WAP_WAY',
@@ -66,12 +79,14 @@ export async function createMobilePayment(params: {
 
 // 验证支付宝回调签名
 export function verifyCallback(params: any): boolean {
-  return alipaySdk.checkNotifySign(params);
+  const sdk = getAlipaySdk();
+  return sdk.checkNotifySign(params);
 }
 
 // 查询订单支付状态
 export async function queryPayment(outTradeNo: string) {
-  const result = await alipaySdk.exec('alipay.trade.query', {
+  const sdk = getAlipaySdk();
+  const result = await sdk.exec('alipay.trade.query', {
     bizContent: {
       out_trade_no: outTradeNo,
     },
