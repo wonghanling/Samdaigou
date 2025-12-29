@@ -155,9 +155,12 @@ export default function CartPage() {
                   </div>
                 </div>
 
-                <button className="w-full bg-green-500 hover:bg-green-600 text-white font-black text-lg py-4 px-6 uppercase transition-colors mb-4">
+                <Link
+                  href="/checkout"
+                  className="block w-full bg-green-500 hover:bg-green-600 text-white font-black text-lg py-4 px-6 uppercase transition-colors mb-4 text-center"
+                >
                   去结算
-                </button>
+                </Link>
 
                 <Link
                   href="/"
