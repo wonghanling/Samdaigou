@@ -69,13 +69,19 @@ export default function CheckoutPage() {
           return;
         }
 
-        // 先跳转到支付页面
-        window.location.href = paymentUrl;
+        // 清空购物车
+        clearCart();
 
-        // 跳转成功后再清空购物车（延迟执行，确保跳转已开始）
-        setTimeout(() => {
-          clearCart();
-        }, 500);
+        // 创建一个临时div来渲染支付表单
+        const div = document.createElement('div');
+        div.innerHTML = paymentUrl;
+        document.body.appendChild(div);
+
+        // 自动提交表单（支付宝SDK返回的HTML包含自动提交脚本）
+        const script = div.querySelector('script');
+        if (script) {
+          eval(script.innerHTML);
+        }
       } else {
         alert('创建订单失败：' + (result.error || '未知错误'));
         setLoading(false);
