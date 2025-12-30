@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useCart } from '@/contexts/CartContext';
 import { useUser } from '@/contexts/UserContext';
 import CartSidebar from './CartSidebar';
+import Image from 'next/image';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -26,8 +27,20 @@ export default function Navbar() {
       <div className="container-custom">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="text-2xl font-bold text-black">samdaigou</div>
+          <Link href="/" className="flex flex-col leading-tight">
+            <div className="text-base font-bold text-black flex items-center gap-1">
+              购物车付款
+              <Image
+                src="/right-arrow-svgrepo-com.svg"
+                alt="arrow"
+                width={16}
+                height={16}
+                className="inline-block"
+              />
+            </div>
+            <div className="text-xs font-medium text-gray-700">
+              模式① 和模式② 不可同时购买谨慎
+            </div>
           </Link>
 
           {/* Desktop Navigation */}
@@ -49,19 +62,12 @@ export default function Navbar() {
               onClick={() => setCartSidebarOpen(true)}
               className="relative p-2 hover:text-primary transition-colors"
             >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                />
-              </svg>
+              <Image
+                src="/shopping-cart-svgrepo-com.svg"
+                alt="购物车"
+                width={24}
+                height={24}
+              />
               {totalItems > 0 && (
                 <span className="absolute -top-1 -right-1 bg-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                   {totalItems}
@@ -139,19 +145,12 @@ export default function Navbar() {
               onClick={() => setCartSidebarOpen(true)}
               className="relative p-2 hover:bg-gray-100 rounded-lg"
             >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                />
-              </svg>
+              <Image
+                src="/shopping-cart-svgrepo-com.svg"
+                alt="购物车"
+                width={24}
+                height={24}
+              />
               {totalItems > 0 && (
                 <span className="absolute -top-1 -right-1 bg-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                   {totalItems}
