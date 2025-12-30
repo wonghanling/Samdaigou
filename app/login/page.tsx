@@ -6,11 +6,11 @@ import { supabase } from '@/lib/supabase';
 import Navbar from '@/components/Navbar';
 import Link from 'next/link';
 
-type AuthMode = 'email' | 'password';
+type LoginMode = 'otp' | 'password';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [mode, setMode] = useState<AuthMode>('email');
+  const [mode, setMode] = useState<LoginMode>('otp');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [code, setCode] = useState('');
@@ -26,7 +26,6 @@ export default function LoginPage() {
       return;
     }
 
-    // 验证邮箱格式
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setMessage('请输入有效的邮箱地址');
@@ -40,26 +39,32 @@ export default function LoginPage() {
       const { error } = await supabase.auth.signInWithOtp({
         email: email,
         options: {
-          shouldCreateUser: true, // 如果用户不存在则自动注册
+          shouldCreateUser: false, // 不自动创建用户，必须先注册
         },
       });
 
-      if (error) throw error;
+      if (error) {
+        if (error.message.includes('User not found')) {
+          setMessage('该邮箱未注册，请先注册账号');
+        } else {
+          throw error;
+        }
+      } else {
+        setCodeSent(true);
+        setMessage('验证码已发送到您的邮箱，请查收！（请检查垃圾邮件箱）');
 
-      setCodeSent(true);
-      setMessage('验证码已发送到您的邮箱，请查收！');
-
-      // 倒计时60秒
-      setCountdown(60);
-      const timer = setInterval(() => {
-        setCountdown((prev) => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
+        // 倒计时60秒
+        setCountdown(60);
+        const timer = setInterval(() => {
+          setCountdown((prev) => {
+            if (prev <= 1) {
+              clearInterval(timer);
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+      }
     } catch (error: any) {
       console.error('发送验证码失败:', error);
       setMessage(error.message || '发送验证码失败，请重试');
@@ -69,7 +74,7 @@ export default function LoginPage() {
   };
 
   // 验证码登录
-  const handleEmailLogin = async (e: React.FormEvent) => {
+  const handleOTPLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !code) {
       setMessage('请输入邮箱和验证码');
@@ -103,16 +108,11 @@ export default function LoginPage() {
     }
   };
 
-  // 密码登录/注册
-  const handlePasswordAuth = async (e: React.FormEvent) => {
+  // 密码登录
+  const handlePasswordLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) {
       setMessage('请输入邮箱和密码');
-      return;
-    }
-
-    if (password.length < 6) {
-      setMessage('密码至少需要6位字符');
       return;
     }
 
@@ -120,33 +120,18 @@ export default function LoginPage() {
     setMessage('');
 
     try {
-      // 先尝试登录
-      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email: email,
         password: password,
       });
 
-      if (signInError) {
-        // 如果登录失败，尝试注册
-        if (signInError.message.includes('Invalid login credentials')) {
-          const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-            email: email,
-            password: password,
-          });
-
-          if (signUpError) throw signUpError;
-
-          if (signUpData.user) {
-            setMessage('注册成功！请查收邮箱验证邮件');
-            // Supabase 默认需要邮箱验证，所以这里等待用户验证
-            return;
-          }
+      if (error) {
+        if (error.message.includes('Invalid login credentials')) {
+          setMessage('邮箱或密码错误，请重试');
         } else {
-          throw signInError;
+          throw error;
         }
-      }
-
-      if (signInData.user) {
+      } else if (data.user) {
         setMessage('登录成功！');
         setTimeout(() => {
           router.push('/');
@@ -154,8 +139,8 @@ export default function LoginPage() {
         }, 500);
       }
     } catch (error: any) {
-      console.error('操作失败:', error);
-      setMessage(error.message || '操作失败，请重试');
+      console.error('登录失败:', error);
+      setMessage(error.message || '登录失败，请重试');
     } finally {
       setLoading(false);
     }
@@ -168,15 +153,15 @@ export default function LoginPage() {
         <div className="container-custom">
           <div className="max-w-md mx-auto">
             <div className="bg-white border-4 border-black p-8">
-              <h1 className="text-3xl font-black mb-8 uppercase text-center">登录 / 注册</h1>
+              <h1 className="text-3xl font-black mb-8 uppercase text-center">登录</h1>
 
               {/* 切换登录方式 */}
               <div className="flex gap-2 mb-6">
                 <button
                   type="button"
-                  onClick={() => setMode('email')}
+                  onClick={() => setMode('otp')}
                   className={`flex-1 py-2 px-4 font-bold border-2 border-black transition-colors ${
-                    mode === 'email'
+                    mode === 'otp'
                       ? 'bg-pink-500 text-white'
                       : 'bg-white text-black hover:bg-gray-100'
                   }`}
@@ -196,9 +181,9 @@ export default function LoginPage() {
                 </button>
               </div>
 
-              {/* 邮箱验证码登录 */}
-              {mode === 'email' && (
-                <form onSubmit={handleEmailLogin} className="space-y-4">
+              {/* 验证码登录 */}
+              {mode === 'otp' && (
+                <form onSubmit={handleOTPLogin} className="space-y-4">
                   <div>
                     <label className="block text-sm font-bold mb-2">
                       QQ邮箱 <span className="text-red-500">*</span>
@@ -264,9 +249,9 @@ export default function LoginPage() {
                 </form>
               )}
 
-              {/* 密码登录/注册 */}
+              {/* 密码登录 */}
               {mode === 'password' && (
-                <form onSubmit={handlePasswordAuth} className="space-y-4">
+                <form onSubmit={handlePasswordLogin} className="space-y-4">
                   <div>
                     <label className="block text-sm font-bold mb-2">
                       QQ邮箱 <span className="text-red-500">*</span>
@@ -291,8 +276,7 @@ export default function LoginPage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="w-full border-2 border-black px-4 py-3 focus:outline-none focus:border-pink-500"
-                      placeholder="至少6位字符"
-                      minLength={6}
+                      placeholder="请输入密码"
                     />
                   </div>
 
@@ -301,12 +285,8 @@ export default function LoginPage() {
                     disabled={loading}
                     className="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-6 uppercase transition-colors border-4 border-black disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {loading ? '处理中...' : '登录 / 注册'}
+                    {loading ? '登录中...' : '登录'}
                   </button>
-
-                  <p className="text-xs text-gray-600 text-center">
-                    首次使用密码登录将自动注册账号
-                  </p>
                 </form>
               )}
 
@@ -323,10 +303,18 @@ export default function LoginPage() {
                 </div>
               )}
 
-              {/* 返回首页 */}
+              <div className="mt-6 text-center">
+                <p className="text-sm text-gray-600">
+                  还没有账号？{' '}
+                  <Link href="/register" className="text-pink-500 hover:text-pink-600 font-bold">
+                    立即注册
+                  </Link>
+                </p>
+              </div>
+
               <Link
                 href="/"
-                className="block mt-6 text-center text-sm text-gray-600 hover:text-gray-900 font-medium"
+                className="block mt-4 text-center text-sm text-gray-600 hover:text-gray-900 font-medium"
               >
                 返回首页
               </Link>
