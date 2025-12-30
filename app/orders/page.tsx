@@ -37,6 +37,7 @@ export default function OrdersPage() {
   const router = useRouter();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [payingOrderId, setPayingOrderId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!userLoading && !user) {
@@ -64,6 +65,49 @@ export default function OrdersPage() {
       console.error('获取订单失败:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleContinuePay = async (orderNo: string) => {
+    setPayingOrderId(orderNo);
+
+    try {
+      const response = await fetch('/api/payment/resume', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ orderNo }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        const paymentUrl = result.data?.paymentUrl;
+
+        if (!paymentUrl) {
+          alert('支付URL生成失败');
+          setPayingOrderId(null);
+          return;
+        }
+
+        // 渲染支付表单并提交
+        const div = document.createElement('div');
+        div.innerHTML = paymentUrl;
+        document.body.appendChild(div);
+
+        const script = div.querySelector('script');
+        if (script) {
+          eval(script.innerHTML);
+        }
+      } else {
+        alert('发起支付失败：' + (result.error || '未知错误'));
+        setPayingOrderId(null);
+      }
+    } catch (error) {
+      console.error('继续支付失败:', error);
+      alert('继续支付失败，请重试');
+      setPayingOrderId(null);
     }
   };
 
@@ -185,12 +229,25 @@ export default function OrdersPage() {
                     <p className="text-sm text-gray-700">{order.user_address}</p>
                   </div>
 
-                  {/* 订单金额 */}
-                  <div className="flex justify-end items-center gap-4">
-                    <span className="text-gray-700">订单金额：</span>
-                    <span className="text-2xl font-black text-pink-500">
-                      €{parseFloat(order.total_amount.toString()).toFixed(2)}
-                    </span>
+                  {/* 订单金额和操作按钮 */}
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-4">
+                      <span className="text-gray-700">订单金额：</span>
+                      <span className="text-2xl font-black text-pink-500">
+                        €{parseFloat(order.total_amount.toString()).toFixed(2)}
+                      </span>
+                    </div>
+
+                    {/* 待支付订单显示继续支付按钮 */}
+                    {order.status === 'pending' && (
+                      <button
+                        onClick={() => handleContinuePay(order.order_no)}
+                        disabled={payingOrderId === order.order_no}
+                        className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-6 uppercase transition-colors border-4 border-black disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {payingOrderId === order.order_no ? '跳转中...' : '继续支付'}
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}

@@ -68,12 +68,12 @@ function PaymentReturnContent() {
                 >
                   返回首页
                 </Link>
-                <button
-                  onClick={() => router.push(`/orders/${orderNo}`)}
+                <Link
+                  href="/orders"
                   className="block w-full bg-white hover:bg-gray-100 text-black font-bold py-4 px-6 uppercase transition-colors border-4 border-black"
                 >
                   查看订单详情
-                </button>
+                </Link>
               </div>
             </div>
           )}
