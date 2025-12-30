@@ -29,16 +29,16 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex flex-col leading-tight">
             <div className="text-base font-bold text-black flex items-center gap-1">
-              购物车付款
+              购物车
               <Image
                 src="/right-arrow-svgrepo-com.svg"
                 alt="arrow"
-                width={16}
-                height={16}
+                width={32}
+                height={32}
                 className="inline-block"
               />
             </div>
-            <div className="text-xs font-medium text-gray-700">
+            <div className="text-xs font-medium text-yellow-500">
               模式① 和模式② 不可同时购买谨慎
             </div>
           </Link>
@@ -65,8 +65,8 @@ export default function Navbar() {
               <Image
                 src="/shopping-cart-svgrepo-com.svg"
                 alt="购物车"
-                width={24}
-                height={24}
+                width={40}
+                height={40}
               />
               {totalItems > 0 && (
                 <span className="absolute -top-1 -right-1 bg-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
@@ -148,8 +148,8 @@ export default function Navbar() {
               <Image
                 src="/shopping-cart-svgrepo-com.svg"
                 alt="购物车"
-                width={24}
-                height={24}
+                width={36}
+                height={36}
               />
               {totalItems > 0 && (
                 <span className="absolute -top-1 -right-1 bg-pink-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
