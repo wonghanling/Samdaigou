@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { CartProvider } from "@/contexts/CartContext";
+import { UserProvider } from "@/contexts/UserContext";
 
 export const metadata: Metadata = {
   title: "山姆代购 - 优质商品，便捷代购",
@@ -20,9 +21,11 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet" />
       </head>
       <body>
-        <CartProvider>
-          {children}
-        </CartProvider>
+        <UserProvider>
+          <CartProvider>
+            {children}
+          </CartProvider>
+        </UserProvider>
       </body>
     </html>
   );

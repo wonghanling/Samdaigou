@@ -4,7 +4,7 @@ import { createPCPayment, createMobilePayment, isMobile, generateOrderNo } from 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { items, userInfo } = body;
+    const { items, userInfo, userId } = body;
 
     // 计算金额
     const itemsTotal = items.reduce((sum: number, item: any) => {
@@ -16,14 +16,47 @@ export async function POST(request: NextRequest) {
     // 生成订单号
     const orderNo = generateOrderNo();
 
-    // 获取User-Agent判断设备类型
-    const userAgent = request.headers.get('user-agent') || '';
-    const isMobileDevice = isMobile(userAgent);
-
-    // 获取部署域名
+    // 保存订单到数据库
     const host = request.headers.get('host') || 'localhost:3000';
     const protocol = host.includes('localhost') ? 'http' : 'https';
     const baseUrl = `${protocol}://${host}`;
+
+    try {
+      const saveOrderResponse = await fetch(`${baseUrl}/api/orders/create`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          orderNo,
+          userId,
+          userName: userInfo.name,
+          userPhone: userInfo.phone,
+          userAddress: userInfo.address,
+          items: items.map((item: any) => ({
+            productId: item.id,
+            productName: item.name,
+            productImage: item.imageUrl,
+            price: item.price,
+            quantity: item.quantity,
+            subtotal: item.price * item.quantity,
+          })),
+          totalAmount,
+        }),
+      });
+
+      const saveOrderResult = await saveOrderResponse.json();
+      if (!saveOrderResult.success) {
+        console.error('保存订单失败:', saveOrderResult.error);
+      }
+    } catch (saveError) {
+      console.error('保存订单异常:', saveError);
+      // 继续执行，不中断支付流程
+    }
+
+    // 获取User-Agent判断设备类型
+    const userAgent = request.headers.get('user-agent') || '';
+    const isMobileDevice = isMobile(userAgent);
 
     // 支付参数
     const paymentParams = {
@@ -44,9 +77,6 @@ export async function POST(request: NextRequest) {
       // 电脑网站支付
       paymentUrl = await createPCPayment(paymentParams);
     }
-
-    // TODO: 这里应该将订单信息保存到数据库
-    // 暂时返回订单信息和支付URL
 
     return NextResponse.json({
       success: true,

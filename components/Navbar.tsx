@@ -4,13 +4,16 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { useCart } from '@/contexts/CartContext';
+import { useUser } from '@/contexts/UserContext';
 import CartSidebar from './CartSidebar';
 
 export default function Navbar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cartSidebarOpen, setCartSidebarOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const { totalItems } = useCart();
+  const { user, profile, loading, signOut } = useUser();
 
   const navLinks = [
     { name: '首页', href: '/' },
@@ -66,12 +69,67 @@ export default function Navbar() {
               )}
             </button>
 
-            <Link
-              href="/login"
-              className="btn-primary text-sm"
-            >
-              登录
-            </Link>
+            {/* 用户菜单 */}
+            {!loading && (
+              <>
+                {user ? (
+                  <div className="relative">
+                    <button
+                      onClick={() => setUserMenuOpen(!userMenuOpen)}
+                      className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                    >
+                      <div className="w-8 h-8 bg-pink-500 text-white rounded-full flex items-center justify-center font-bold">
+                        {profile?.name?.[0] || user.email?.[0].toUpperCase()}
+                      </div>
+                      <svg
+                        className={`w-4 h-4 transition-transform ${userMenuOpen ? 'rotate-180' : ''}`}
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+
+                    {/* 下拉菜单 */}
+                    {userMenuOpen && (
+                      <div className="absolute right-0 mt-2 w-48 bg-white border-2 border-black shadow-lg">
+                        <div className="px-4 py-3 border-b-2 border-gray-200">
+                          <p className="text-sm font-bold truncate">{user.email}</p>
+                        </div>
+                        <Link
+                          href="/orders"
+                          className="block px-4 py-2 text-sm hover:bg-gray-100 font-medium"
+                          onClick={() => setUserMenuOpen(false)}
+                        >
+                          我的订单
+                        </Link>
+                        <Link
+                          href="/profile"
+                          className="block px-4 py-2 text-sm hover:bg-gray-100 font-medium"
+                          onClick={() => setUserMenuOpen(false)}
+                        >
+                          个人资料
+                        </Link>
+                        <button
+                          onClick={() => {
+                            signOut();
+                            setUserMenuOpen(false);
+                          }}
+                          className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 font-medium text-red-600"
+                        >
+                          退出登录
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <Link href="/login" className="btn-primary text-sm">
+                    登录
+                  </Link>
+                )}
+              </>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -146,13 +204,42 @@ export default function Navbar() {
                 {link.name}
               </Link>
             ))}
-            <Link
-              href="/login"
-              className="block mt-4 mx-4 text-center btn-primary text-sm"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              登录
-            </Link>
+
+            {!loading && (
+              <>
+                {user ? (
+                  <div className="mt-4 px-4">
+                    <div className="p-3 bg-gray-100 border-2 border-gray-300 mb-2">
+                      <p className="text-sm font-bold truncate">{user.email}</p>
+                    </div>
+                    <Link
+                      href="/profile"
+                      className="block py-2 px-4 text-sm font-medium text-gray-700 hover:bg-gray-100"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      个人资料
+                    </Link>
+                    <button
+                      onClick={() => {
+                        signOut();
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full text-left py-2 px-4 text-sm font-medium text-red-600 hover:bg-gray-100"
+                    >
+                      退出登录
+                    </button>
+                  </div>
+                ) : (
+                  <Link
+                    href="/login"
+                    className="block mt-4 mx-4 text-center btn-primary text-sm"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    登录
+                  </Link>
+                )}
+              </>
+            )}
           </div>
         )}
       </div>

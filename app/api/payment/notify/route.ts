@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyCallback } from '@/lib/alipay';
+import { createServerSupabaseClient } from '@/lib/supabase';
 
 // 支付宝异步通知回调
 export async function POST(request: NextRequest) {
@@ -33,12 +34,26 @@ export async function POST(request: NextRequest) {
     if (trade_status === 'TRADE_SUCCESS' || trade_status === 'TRADE_FINISHED') {
       console.log(`订单 ${out_trade_no} 支付成功，支付宝交易号: ${trade_no}`);
 
-      // TODO: 更新数据库订单状态为已支付
-      // await updateOrderStatus(out_trade_no, {
-      //   status: 'paid',
-      //   tradeNo: trade_no,
-      //   paidAt: new Date(),
-      // });
+      // 更新数据库订单状态为已支付
+      try {
+        const supabase = createServerSupabaseClient();
+        const { error } = await supabase
+          .from('orders')
+          .update({
+            status: 'paid',
+            trade_no: trade_no,
+            paid_at: new Date().toISOString(),
+          })
+          .eq('order_no', out_trade_no);
+
+        if (error) {
+          console.error('更新订单状态失败:', error);
+        } else {
+          console.log(`订单 ${out_trade_no} 状态已更新为已支付`);
+        }
+      } catch (dbError) {
+        console.error('数据库更新异常:', dbError);
+      }
     }
 
     // 返回success给支付宝，表示已收到通知

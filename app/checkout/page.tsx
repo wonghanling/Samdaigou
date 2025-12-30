@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useCart } from '@/contexts/CartContext';
+import { useUser } from '@/contexts/UserContext';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import Image from 'next/image';
@@ -9,6 +10,7 @@ import Link from 'next/link';
 
 export default function CheckoutPage() {
   const { cartItems, totalPrice, clearCart } = useCart();
+  const { user } = useUser();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [userInfo, setUserInfo] = useState({
@@ -53,6 +55,7 @@ export default function CheckoutPage() {
         body: JSON.stringify({
           items: cartItems,
           userInfo,
+          userId: user?.id || null,
         }),
       });
 
