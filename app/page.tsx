@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useCart } from '@/contexts/CartContext';
 import { useUser } from '@/contexts/UserContext';
+import { useRouter } from 'next/navigation';
 
 // 示例商品数据（后续会从Firebase获取）
 const newArrivals = [
