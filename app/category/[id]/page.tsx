@@ -3,8 +3,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import Navbar from '@/components/Navbar';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useCart } from '@/contexts/CartContext';
+import { useUser } from '@/contexts/UserContext';
 
 // 分类数据
 const categories = [
@@ -178,13 +179,23 @@ const instantProducts = [
 
 export default function CategoryPage() {
   const params = useParams();
+  const router = useRouter();
   const categoryId = params.id as string;
   const { addToCart } = useCart();
+  const { user } = useUser();
 
   // 添加到购物车函数
   const handleAddToCart = (e: React.MouseEvent, product: any) => {
     e.preventDefault(); // 阻止Link的默认导航
     e.stopPropagation();
+
+    // 检查是否登录
+    if (!user) {
+      alert('请先登录后再添加商品到购物车');
+      router.push('/login');
+      return;
+    }
+
     addToCart({
       id: product.id,
       name: product.name,

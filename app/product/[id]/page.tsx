@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import { useState } from 'react';
 import { useCart } from '@/contexts/CartContext';
+import { useUser } from '@/contexts/UserContext';
 
 // 临时商品数据（后续从Firebase获取）
 const products = [
@@ -175,6 +176,7 @@ export default function ProductDetail() {
   const productId = params.id as string;
   const product = products.find(p => p.id === productId);
   const { addToCart, cartItems } = useCart();
+  const { user } = useUser();
 
   const [quantity, setQuantity] = useState(1);
   const [descriptionOpen, setDescriptionOpen] = useState(true);
@@ -192,6 +194,13 @@ export default function ProductDetail() {
   };
 
   const handleAddToCart = () => {
+    // 检查是否登录
+    if (!user) {
+      alert('请先登录后再添加商品到购物车');
+      router.push('/login');
+      return;
+    }
+
     addToCart({
       id: product.id,
       name: product.name,

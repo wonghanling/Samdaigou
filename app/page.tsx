@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useCart } from '@/contexts/CartContext';
-import { useRouter } from 'next/navigation';
+import { useUser } from '@/contexts/UserContext';
 
 // 示例商品数据（后续会从Firebase获取）
 const newArrivals = [
@@ -176,6 +176,7 @@ export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [currentReviewSlide, setCurrentReviewSlide] = useState(0);
   const { addToCart } = useCart();
+  const { user } = useUser();
   const router = useRouter();
   const [animatingProductId, setAnimatingProductId] = useState<string | null>(null);
 
@@ -183,6 +184,14 @@ export default function Home() {
   const handleAddToCart = (e: React.MouseEvent, product: typeof newArrivals[0]) => {
     e.preventDefault(); // 阻止Link的默认导航
     e.stopPropagation();
+
+    // 检查是否登录
+    if (!user) {
+      alert('请先登录后再添加商品到购物车');
+      router.push('/login');
+      return;
+    }
+
     addToCart({
       id: product.id,
       name: product.name,

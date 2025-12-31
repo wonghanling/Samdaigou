@@ -47,7 +47,7 @@ export default function RegisterPage() {
       if (error) throw error;
 
       setCodeSent(true);
-      setMessage('验证码已发送到您的邮箱，请查收！（请检查垃圾邮件箱）');
+      setMessage('验证码已发送到您的邮箱，请查收！');
 
       // 倒计时60秒
       setCountdown(60);
@@ -304,7 +304,7 @@ export default function RegisterPage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-6 uppercase transition-colors border-4 border-black disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 uppercase transition-colors border-4 border-black disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? '注册中...' : '注册'}
                   </button>
@@ -316,6 +316,8 @@ export default function RegisterPage() {
                 <div
                   className={`mt-4 p-4 border-2 ${
                     message.includes('成功')
+                      ? 'border-green-500 bg-green-50 text-green-700'
+                      : message.includes('验证码已发送')
                       ? 'border-green-500 bg-green-50 text-green-700'
                       : 'border-red-500 bg-red-50 text-red-700'
                   }`}
