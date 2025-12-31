@@ -37,6 +37,19 @@ export default function RegisterPage() {
     setMessage('');
 
     try {
+      // 先检查用户是否已存在
+      const { data: existingUsers } = await supabase
+        .from('users')
+        .select('email')
+        .eq('email', email)
+        .limit(1);
+
+      if (existingUsers && existingUsers.length > 0) {
+        setMessage('该邮箱已注册，请直接登录');
+        setLoading(false);
+        return;
+      }
+
       const { error } = await supabase.auth.signInWithOtp({
         email: email,
         options: {
@@ -126,14 +139,31 @@ export default function RegisterPage() {
     setMessage('');
 
     try {
+      // 先检查用户是否已存在
+      const { data: existingUsers } = await supabase
+        .from('users')
+        .select('email')
+        .eq('email', email)
+        .limit(1);
+
+      if (existingUsers && existingUsers.length > 0) {
+        setMessage('该邮箱已注册，请直接登录');
+        setLoading(false);
+        return;
+      }
+
       const { data, error } = await supabase.auth.signUp({
         email: email,
         password: password,
       });
 
-      if (error) throw error;
-
-      if (data.user) {
+      if (error) {
+        if (error.message.includes('already registered') || error.message.includes('User already registered')) {
+          setMessage('该邮箱已注册，请直接登录');
+        } else {
+          throw error;
+        }
+      } else if (data.user) {
         setMessage('注册成功！请查收邮箱验证邮件');
         setTimeout(() => {
           router.push('/login');
@@ -141,11 +171,7 @@ export default function RegisterPage() {
       }
     } catch (error: any) {
       console.error('注册失败:', error);
-      if (error.message.includes('already registered')) {
-        setMessage('该邮箱已被注册，请直接登录');
-      } else {
-        setMessage(error.message || '注册失败，请重试');
-      }
+      setMessage(error.message || '注册失败，请重试');
     } finally {
       setLoading(false);
     }
