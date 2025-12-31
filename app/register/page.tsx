@@ -37,42 +37,51 @@ export default function RegisterPage() {
     setMessage('');
 
     try {
-      // 先检查用户是否已存在
-      const { data: existingUsers } = await supabase
-        .from('users')
-        .select('email')
-        .eq('email', email)
-        .limit(1);
+      // 先尝试用shouldCreateUser: false发送验证码，检查用户是否已存在
+      const { error: checkError } = await supabase.auth.signInWithOtp({
+        email: email,
+        options: {
+          shouldCreateUser: false, // 不创建新用户，只为已存在用户发送
+        },
+      });
 
-      if (existingUsers && existingUsers.length > 0) {
-        setMessage('该邮箱已注册，请直接登录');
+      // 如果成功（没有错误），说明用户已存在
+      if (!checkError) {
+        setMessage('该邮箱已注册，请前往登录页面登录');
         setLoading(false);
         return;
       }
 
-      const { error } = await supabase.auth.signInWithOtp({
-        email: email,
-        options: {
-          shouldCreateUser: true, // 允许创建新用户
-        },
-      });
-
-      if (error) throw error;
-
-      setCodeSent(true);
-      setMessage('验证码已发送到您的邮箱，请查收！');
-
-      // 倒计时60秒
-      setCountdown(60);
-      const timer = setInterval(() => {
-        setCountdown((prev) => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            return 0;
-          }
-          return prev - 1;
+      // 如果失败且错误提示用户不存在，说明可以注册
+      if (checkError.message.includes('User not found') || checkError.message.includes('not found')) {
+        // 用户不存在，可以发送注册验证码
+        const { error } = await supabase.auth.signInWithOtp({
+          email: email,
+          options: {
+            shouldCreateUser: true, // 允许创建新用户
+          },
         });
-      }, 1000);
+
+        if (error) throw error;
+
+        setCodeSent(true);
+        setMessage('验证码已发送到您的邮箱，请查收！');
+
+        // 倒计时60秒
+        setCountdown(60);
+        const timer = setInterval(() => {
+          setCountdown((prev) => {
+            if (prev <= 1) {
+              clearInterval(timer);
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+      } else {
+        // 其他错误
+        throw checkError;
+      }
     } catch (error: any) {
       console.error('发送验证码失败:', error);
       setMessage(error.message || '发送验证码失败，请重试');
@@ -139,35 +148,40 @@ export default function RegisterPage() {
     setMessage('');
 
     try {
-      // 先检查用户是否已存在
-      const { data: existingUsers } = await supabase
-        .from('users')
-        .select('email')
-        .eq('email', email)
-        .limit(1);
-
-      if (existingUsers && existingUsers.length > 0) {
-        setMessage('该邮箱已注册，请直接登录');
-        setLoading(false);
-        return;
-      }
-
       const { data, error } = await supabase.auth.signUp({
         email: email,
         password: password,
       });
 
       if (error) {
-        if (error.message.includes('already registered') || error.message.includes('User already registered')) {
-          setMessage('该邮箱已注册，请直接登录');
+        // Supabase会返回特定错误如果邮箱已被注册
+        if (error.message.includes('already') || error.message.includes('exists') || error.message.includes('registered')) {
+          setMessage('该邮箱已注册，请前往登录页面登录');
         } else {
           throw error;
         }
-      } else if (data.user) {
-        setMessage('注册成功！请查收邮箱验证邮件');
+        setLoading(false);
+        return;
+      }
+
+      if (data.user) {
+        // 检查是否是新创建的用户
+        const userCreatedAt = new Date(data.user.created_at || '');
+        const now = new Date();
+        const timeDiff = now.getTime() - userCreatedAt.getTime();
+
+        // 如果用户创建时间超过5秒，说明是已存在的用户
+        if (timeDiff > 5000) {
+          setMessage('该邮箱已注册，请前往登录页面登录');
+          setLoading(false);
+          return;
+        }
+
+        setMessage('注册成功！正在跳转...');
         setTimeout(() => {
-          router.push('/login');
-        }, 2000);
+          router.push('/');
+          router.refresh();
+        }, 1000);
       }
     } catch (error: any) {
       console.error('注册失败:', error);
