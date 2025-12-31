@@ -177,6 +177,7 @@ export default function Home() {
   const [currentReviewSlide, setCurrentReviewSlide] = useState(0);
   const { addToCart } = useCart();
   const router = useRouter();
+  const [animatingProductId, setAnimatingProductId] = useState<string | null>(null);
 
   // 添加到购物车函数
   const handleAddToCart = (e: React.MouseEvent, product: typeof newArrivals[0]) => {
@@ -188,6 +189,10 @@ export default function Home() {
       price: product.price,
       imageUrl: product.imageUrl,
     });
+
+    // 触发动画
+    setAnimatingProductId(product.id);
+    setTimeout(() => setAnimatingProductId(null), 600);
   };
 
   // 添加9.9代下单服务
@@ -364,7 +369,9 @@ export default function Home() {
                                   {/* 加入购物车按钮 */}
                                   <button
                                     onClick={(e) => handleAddToCart(e, product)}
-                                    className="w-10 h-10 md:w-14 md:h-14 bg-pink-500 hover:bg-pink-600 rounded-full flex items-center justify-center text-white shadow-lg transition-all"
+                                    className={`w-10 h-10 md:w-14 md:h-14 bg-pink-500 hover:bg-pink-600 rounded-full flex items-center justify-center text-white shadow-lg transition-all ${
+                                      animatingProductId === product.id ? 'animate-bounce-scale' : ''
+                                    }`}
                                   >
                                     <svg className="w-5 h-5 md:w-7 md:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" />

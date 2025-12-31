@@ -162,7 +162,7 @@ export default function LoginPage() {
                   onClick={() => setMode('otp')}
                   className={`flex-1 py-2 px-4 font-bold border-2 border-black transition-colors ${
                     mode === 'otp'
-                      ? 'bg-pink-500 text-white'
+                      ? 'bg-green-500 text-white'
                       : 'bg-white text-black hover:bg-gray-100'
                   }`}
                 >
@@ -173,7 +173,7 @@ export default function LoginPage() {
                   onClick={() => setMode('password')}
                   className={`flex-1 py-2 px-4 font-bold border-2 border-black transition-colors ${
                     mode === 'password'
-                      ? 'bg-pink-500 text-white'
+                      ? 'bg-green-500 text-white'
                       : 'bg-white text-black hover:bg-gray-100'
                   }`}
                 >
@@ -193,7 +193,7 @@ export default function LoginPage() {
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full border-2 border-black px-4 py-3 focus:outline-none focus:border-pink-500"
+                      className="w-full border-2 border-black px-4 py-3 focus:outline-none focus:border-green-500"
                       placeholder="example@qq.com"
                       disabled={codeSent}
                     />
@@ -204,7 +204,7 @@ export default function LoginPage() {
                       type="button"
                       onClick={handleSendCode}
                       disabled={loading || countdown > 0}
-                      className="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-6 uppercase transition-colors border-4 border-black disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 uppercase transition-colors border-4 border-black disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {loading ? '发送中...' : countdown > 0 ? `${countdown}秒后重试` : '发送验证码'}
                     </button>
@@ -219,7 +219,7 @@ export default function LoginPage() {
                           required
                           value={code}
                           onChange={(e) => setCode(e.target.value)}
-                          className="w-full border-2 border-black px-4 py-3 focus:outline-none focus:border-pink-500"
+                          className="w-full border-2 border-black px-4 py-3 focus:outline-none focus:border-green-500"
                           placeholder="请输入6位验证码"
                           maxLength={6}
                         />
@@ -228,7 +228,7 @@ export default function LoginPage() {
                       <button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-6 uppercase transition-colors border-4 border-black disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 uppercase transition-colors border-4 border-black disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {loading ? '登录中...' : '登录'}
                       </button>
@@ -261,7 +261,7 @@ export default function LoginPage() {
                       required
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full border-2 border-black px-4 py-3 focus:outline-none focus:border-pink-500"
+                      className="w-full border-2 border-black px-4 py-3 focus:outline-none focus:border-green-500"
                       placeholder="example@qq.com"
                     />
                   </div>
@@ -275,7 +275,7 @@ export default function LoginPage() {
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      className="w-full border-2 border-black px-4 py-3 focus:outline-none focus:border-pink-500"
+                      className="w-full border-2 border-black px-4 py-3 focus:outline-none focus:border-green-500"
                       placeholder="请输入密码"
                     />
                   </div>
@@ -306,7 +306,7 @@ export default function LoginPage() {
               <div className="mt-6 text-center">
                 <p className="text-sm text-gray-600">
                   还没有账号？{' '}
-                  <Link href="/register" className="text-pink-500 hover:text-pink-600 font-bold">
+                  <Link href="/register" className="text-green-500 hover:text-green-600 font-bold">
                     立即注册
                   </Link>
                 </p>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useCart } from '@/contexts/CartContext';
 import { useUser } from '@/contexts/UserContext';
 import { useRouter } from 'next/navigation';
@@ -10,7 +10,7 @@ import Link from 'next/link';
 
 export default function CheckoutPage() {
   const { cartItems, totalPrice, clearCart } = useCart();
-  const { user } = useUser();
+  const { user, loading: userLoading } = useUser();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [userInfo, setUserInfo] = useState({
@@ -18,6 +18,15 @@ export default function CheckoutPage() {
     phone: '',
     address: '',
   });
+
+  // 检查用户是否登录
+  useEffect(() => {
+    if (!userLoading && !user) {
+      // 未登录，跳转到登录页
+      alert('请先登录后再进行购买');
+      router.push('/login');
+    }
+  }, [user, userLoading, router]);
 
   // 如果购物车为空，重定向到购物车页面
   if (cartItems.length === 0) {
@@ -41,6 +50,22 @@ export default function CheckoutPage() {
     );
   }
 
+  // 如果正在加载用户信息或用户未登录，显示加载状态
+  if (userLoading || !user) {
+    return (
+      <>
+        <Navbar />
+        <div className="min-h-screen bg-gray-50 py-12">
+          <div className="container-custom">
+            <div className="text-center py-20">
+              <p className="text-lg text-gray-600">加载中...</p>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -55,7 +80,7 @@ export default function CheckoutPage() {
         body: JSON.stringify({
           items: cartItems,
           userInfo,
-          userId: user?.id || null,
+          userId: user.id, // 现在保证user一定存在
         }),
       });
 
