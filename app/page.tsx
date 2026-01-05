@@ -258,7 +258,7 @@ export default function Home() {
 
       <main>
         {/* Hero Section */}
-        <section className="relative bg-gradient-to-br from-pink-500 via-pink-400 to-purple-500 text-white min-h-[600px] md:min-h-[700px] flex items-end md:items-center overflow-hidden">
+        <section className="relative bg-gray-100 text-white min-h-[600px] md:min-h-[700px] flex items-end md:items-center overflow-hidden">
           {/* 背景图片 - 手机端 */}
           <div className="absolute inset-0 z-0 md:hidden">
             <Image
