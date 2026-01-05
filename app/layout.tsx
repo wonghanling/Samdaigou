@@ -35,9 +35,9 @@ var LHC_API = LHC_API||{};
 LHC_API.args = {
     mode:'popup',
     lhc_base_url:'//mistcurrnet.com/index.php/',
-    wheight:450,
-    wwidth:350,
-    pheight:520,
+    wheight:550,
+    wwidth:360,
+    pheight:650,
     pwidth:500,
     leaveamessage:true,
     check_messages:true,
