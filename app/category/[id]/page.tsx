@@ -351,6 +351,20 @@ export default function CategoryPage() {
       {/* Footer */}
       <footer className="bg-gray-800 text-white py-8">
         <div className="container-custom text-center">
+          {/* 联系按钮 */}
+          <div className="mb-6">
+            <a
+              href="https://work.weixin.qq.com/ca/cawcdeac58029da582"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-full transition-all shadow-lg hover:scale-105"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              联系我们
+            </a>
+          </div>
           <p>&copy; 2024 山姆代购. All rights reserved.</p>
           <p className="text-sm text-gray-400 mt-2">南京克劳笛奥科技有限公司技术开发</p>
         </div>
