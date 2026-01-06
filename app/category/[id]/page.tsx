@@ -6,6 +6,7 @@ import Navbar from '@/components/Navbar';
 import { useParams, useRouter } from 'next/navigation';
 import { useCart } from '@/contexts/CartContext';
 import { useUser } from '@/contexts/UserContext';
+import { useState } from 'react';
 
 // 分类数据
 const categories = [
@@ -183,6 +184,7 @@ export default function CategoryPage() {
   const categoryId = params.id as string;
   const { addToCart } = useCart();
   const { user } = useUser();
+  const [animatingProductId, setAnimatingProductId] = useState<string | null>(null);
 
   // 添加到购物车函数
   const handleAddToCart = (e: React.MouseEvent, product: any) => {
@@ -202,6 +204,10 @@ export default function CategoryPage() {
       price: product.price,
       imageUrl: product.imageUrl,
     });
+
+    // 触发动画
+    setAnimatingProductId(product.id);
+    setTimeout(() => setAnimatingProductId(null), 600);
   };
 
   // 根据选择的分类获取商品
@@ -319,7 +325,9 @@ export default function CategoryPage() {
                     {/* 加入购物车按钮 */}
                     <button
                       onClick={(e) => handleAddToCart(e, product)}
-                      className="w-12 h-12 bg-pink-500 hover:bg-pink-600 rounded-full flex items-center justify-center text-white shadow-lg transition-all"
+                      className={`w-12 h-12 bg-pink-500 hover:bg-pink-600 rounded-full flex items-center justify-center text-white shadow-lg transition-all ${
+                        animatingProductId === product.id ? 'animate-bounce-scale' : ''
+                      }`}
                     >
                       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" />
