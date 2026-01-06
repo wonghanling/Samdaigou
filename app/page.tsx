@@ -609,7 +609,7 @@ export default function Home() {
                   </h2>
 
                   <div className="bg-white/10 backdrop-blur-sm border-3 border-white/30 rounded-2xl p-8 mb-8">
-                    <p className="text-xl md:text-2xl leading-relaxed">
+                    <p className="text-xl md:text-2xl leading-relaxed text-yellow-300 font-bold">
                       山姆官方配送根据可配送地址可购买<br className="hidden md:block" />
                       会员协助代下单
                     </p>
